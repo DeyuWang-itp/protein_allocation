@@ -80,8 +80,7 @@ mutem = pd.read_csv('mu_tem.csv')
 
 tem = np.array(list(mutem['tem']))
 grt = list(mutem['growth rate'])
-popt1, pcov1 = curve_fit(muparam, tem + 273.15, grt, p0 = [17 * 4.132 * 1000, 325, 11.23, 0], maxfev = 100000)
-# popt1, pcov1 = curve_fit(muparam, tem + 273.15, grt, p0 = [17 * 4.132 * 1000, 0.0, 11.23, 0], maxfev = 100000)
+popt1, pcov1 = curve_fit(muparam, tem + 273.15, grt, p0 = [60000, 325, 11.23, 0], maxfev = 100000)
 er0, a0, k100, b0 = popt1
 
 rho = 0.76
