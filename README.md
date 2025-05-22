@@ -1,4 +1,5 @@
 # protein_allocation
+The data file used for drawing images and python file for processing data in Article "A proteome optimal allocation model for elucidating effects of temperature on bacterial growth".
 
 # data_origin
 These files are obtained from the original images using the getdata function in py/getdata
