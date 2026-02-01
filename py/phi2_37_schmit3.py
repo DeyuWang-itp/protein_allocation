@@ -1,8 +1,9 @@
-# Used in Figure S2.
+# Used in Figure S3.
+# Observe the impact on the model if phi0 increases linearly at low temperatures
 # used file
 # mu_tem.csv
 # generated file
-# fit4_tem_gr.csv fit4_tem_phir.csv fit4_tem_phi1.csv fit4_tem_phi2.csv fit4_tem_phir_phi0_17.csv
+# fit4_tem_phir.csv fit4_tem_phi1.csv fit4_tem_phi2.csv fit4_tem_phir_phi0_17.csv
 import matplotlib.pyplot as plt
 
 import numpy as np
@@ -30,15 +31,14 @@ Gascon1 = 8.314 * 1e-3
 Gascon = 8.314
 th = 373.5
 to = 310.15
-dg = lambda t, n, e2: - (e2 + dh(n) - dcp(n) * th)/Gascon1 *(1/t - 1/to) + dcp(n)/Gascon1 * np.log(t / to) # - dg(n,T)/RT + dg(n,To)/RTo
+dg = lambda t, n, e2: - (e2 + dh(n) - dcp(n) * th)/Gascon1 *(1/t - 1/to) + dcp(n)/Gascon1 * np.log(t / to)
 
 k = lambda t, n, e2: np.exp(dg(t,n,e2)) * km
 k1 = lambda t, er, k10: k10 * np.exp(- er/Gascon * (1/ t- 1/310.15))
 kr = lambda t, er: kr0* np.exp( - er/Gascon * (1/(t) - 1/310.15))
 
 
-# limit for nr is (21,37)
-# such that phi_0 increase from 21 degree, and reach phi0 * 2 as t reach 15 degree
+# assuming that phi_0 increase from 21 degree, and reach phi0 * 2 as t reach 15 degree
 def phi0t(t):
     cond = (t - 273.15 <= 21) * (21 + 273.15 - t) / 6 * phi0 * 1 + phi0
     return cond
@@ -67,7 +67,7 @@ phirt = [phir(k1(i, er0, 20), kr(i, er0), k(i, n0, e20), phi0t(i)) for i in temt
 phi1t = [phi1(k1(i, er0, 20), kr(i, er0), k(i, n0, e20), phi0t(i)) for i in temt]
 phi2t = [phi2(k1(i, er0, 20), kr(i, er0), k(i, n0, e20), phi0t(i)) for i in temt]
 
-savecsv(([i - 273.15 for i in temt],grtt), ('tem,gr'), 'fit4_tem_gr.csv')
+# savecsv(([i - 273.15 for i in temt],grtt), ('tem,gr'), 'fit4_tem_gr.csv')
 savecsv(([i - 273.15 for i in temt],phirt), ('tem,phirt'),'fit4_tem_phir.csv')
 savecsv(([i - 273.15 for i in temt],phi1t), ('tem,phi1t'),'fit4_tem_phi1.csv')
 savecsv(([i - 273.15 for i in temt],phi2t), ('tem,phi2t'),'fit4_tem_phi2.csv')

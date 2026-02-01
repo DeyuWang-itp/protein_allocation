@@ -1,19 +1,22 @@
-# Used to process various raw data to obtain the proportion of protein mass for different classifications
+# Used to process various data to obtain the proportion of protein mass for different sector
 # used file
 # proteomic_diff_medium.csv slice from schimit2016
 # herendeen1979.csv  from herendeen1979 table
-# tem_proteomic.csv slice from knapp2025metabolite
-# get file
+# tem_proteomic.csv slice from knapp2024metabolite
+# mainly used in fig 5(b,c), fig s4
+# generate file
 # schmit2016groePhi2.csv. The proportion of total mass of groL+groS and the proportion of mass of phi2 in multiple environments
-# groePhi2Line.csv. linearship fitted from above data
 # schmit2016usedRPPhir.csv. Fraction of R-class protein measured  in herendeen1979 and total fraction of all R-class protein in multiple environments
 # usedRPPhirLine.csv. Linearship fitted from above data file.
-# knapp2025_phi2_groe.csv. Like schmit2016groePhi2.csv but for proteomic data from knapp2025metabolite
-# phi2_groe_line.csv. Linearship fitted from datafiles, schmit2016groePhi2.csv and knapp2025_phi2_groe.csv
-# knapp2025_usedRP.csv. Like schmit2016usedRPPhir.csv but for proteomic data from knapp2025metabolite
-# knapp2025_usedRP_Line.csv. Linearship fitted from knapp2025_usedRP.csv
+# knapp2024_phi2_groe.csv. Like schmit2016groePhi2.csv but for proteomic data from knapp2024metabolite
+# phi2_groe_line.csv. Linearship fitted from datafiles, schmit2016groePhi2.csv and knapp2024_phi2_groe.csv
+# knapp2024_usedRP.csv. Like schmit2016usedRPPhir.csv but for proteomic data from knapp2024metabolite
+# knapp2024_usedRP_Line.csv. Linearship fitted from knapp2024_usedRP.csv
 # herendeen1979_tem_phi2_phir.csv. Transformed data from herendeen1979 where phi2 used linearship in phi2_groe_line.csv，and phir used linearship in usedRPPhirLine.csv and usedRP15PhirLine, which not save
-# diff_medium_phi3.csv， diff_med_tem_phi3.csv. phi3data from proteomic_diff_medium.csv and tem_proteomic.csv respectively
+# additional file
+# knapp2024_37_gr_phi2.csv, mu and phi2 at 37 degree from knapp2024metabolite
+# knapp2024_30_gr_phi2.csv
+# knapp2024_25_gr_phi2.csv
 
 # used proteomap functional clusters from https://www.proteomaps.net/download.html
 # allchape, trna, tran, ribo, rnap, pep all from these file
@@ -55,9 +58,6 @@ coeff = np.polyfit([groefrac[i] for i in totalkey], [chapefrac[i] for i in total
 groePhi2 = np.column_stack(([groefrac[i] for i in totalkey],[chapefrac[i] for i in totalkey]))
 np.savetxt("schmit2016groePhi2.csv", groePhi2, delimiter=",", header="groe,phi2", comments="")
 
-# groePhi2Line = np.column_stack(([0, 1],[coeff[1], coeff[0] + coeff[1]]))
-# np.savetxt('groePhi2Line.csv', groePhi2Line, delimiter=",",header="groe,phi2", comments="")
-
 
 trna = 'trps  epma  args  lyss  lysu  vals  gluq  hiss  tyrs  thrs  phet  pros  leus  glns  cyss  iles  alas  sers  asps  gltx  phes  metg  alax  alat  alav  alau  alaw  argw  argv  argu  argq  argy  argx  argz  asnu  asnv  asnt  asnw  aspv  aspt  aspu  cyst  glnw  glnv  glnu  glnx  gltu  gltw  gltt  gltv  glyt  glyu  glyw  glyy  glyv  glyx  hisr  ilev  ilet  ileu  leux  leut  leuw  leuz  leup  leuq  leuv  leuu  lysz  lyst  lysq  lysv  lysw  lysy  mett  mety  metv  ilex  metz  metw  iley  metu  pheu  phev  prom  prok  prol  sert  serv  serx  serw  seru  thrw  thrt  thru  thrv  trpt  valx  valz  valv  valy  valw  valu  valt  selc  asns  glyq  glys  sela  fmt'.split('  ')
 tran = 'tufb  tufa  rmf  ycih  infb  infc  tsf  fusa  prfa  frr  infa  efp  yeip  prfb  prfc  prfh'.split('  ')
@@ -83,18 +83,15 @@ isusedRP = isinlist(usedRP)
 isusedRP15 = isinlist(usedRP15)
 usedRPfrac = {i:data[i][isusedRP].sum()/totalmass[i] for i in totalkey}
 usedRP15frac = {i:data[i][isusedRP15].sum()/totalmass[i] for i in totalkey}
-# plt.scatter([usedRP15frac[i] for i in totalkey],[allrfrac[i] for i in totalkey]) # usedRPfrac and usedRP15frac both can show significant linear relationship to allrfrac
+# usedRPfrac and usedRP15frac both can show significant linear relationship to allrfrac
 coeffrp = np.polyfit([usedRPfrac[i] for i in totalkey],[allrfrac[i] for i in totalkey],1)
 coeffrp15 = np.polyfit([usedRP15frac[i] for i in totalkey],[allrfrac[i] for i in totalkey],1)
 usedRPPhir = np.column_stack(([usedRPfrac[i] for i in totalkey],[allrfrac[i] for i in totalkey]))
 np.savetxt("schmit2016usedRPPhir.csv", usedRPPhir, delimiter=",", header="usedRP,phir",comments="")
-# usedRP15Phir = np.column_stack(([usedRP15frac[i] for i in totalkey], [allrfrac[i] for i in totalkey]))
-# np.savetxt("schmit2016usedRP15Phir.csv", usedRP15Phir, delimiter=",", header="usedRP,phir",comments="")
 
 usedRPPhirLine = np.column_stack(([0,1],[coeffrp[1], coeffrp[0] + coeffrp[1]]))
 usedRP15PhirLine = np.column_stack(([0,1],[coeffrp15[1],coeffrp15[0] + coeffrp15[1]]))
 np.savetxt("usedRPPhirLine.csv", usedRPPhirLine, delimiter=",", header="usedRP,phir",comments="")
-# np.savetxt("usedRP15PhirLine.csv", usedRP15PhirLine, delimiter = ",", header = "usedRP,phir", )
 
 herendeen1979 = pd.read_csv('herendeen1979.csv')
 gene1 = herendeen1979['gene']
@@ -105,7 +102,6 @@ for keyi in htempkey:
 
 htempkey.append('37')
 groTemp = {i:herendeen1979[i][groeIdx]/1000 for i in htempkey}
-# phi2Temp = {i:groTemp[i]*coeff[0] + coeff[1] for i in htempkey}
 
 htempkey.remove('15')
 isusedRPH = isinlist(usedRP, gene1)
@@ -117,9 +113,9 @@ phirRPtemp['15'] = usedRPtemp['15'] * coeffrp15[0] + coeffrp15[1]
 htempkey.append('15')
 # or
 htempkey = ['13.5','15','23','30','37','42','46']
-# herendeen1979_phi2_phir = np.column_stack(([float(i) for i in htempkey],[phi2Temp[i] for i in htempkey],[phirRPtemp[i] for i in htempkey]))
-# np.savetxt("herendeen1979_tem_phi2_phir.csv", herendeen1979_phi2_phir, delimiter=",", header="temp,phi2,phir")
 
+temlabel = ['Glucose', '42°C glucose']
+np.savetxt('schmit2016_tem.csv', np.column_stack(([37,42],[mu[i] for i in temlabel],[allrfrac[i] for i in temlabel],[chapefrac[i] for i in temlabel])), delimiter=",", header = "tem,gr,phir,phi2",comments="")
 
 tempP = pd.read_csv('tem_proteomic.csv')
 gene2 = tempP['genename']
@@ -149,21 +145,17 @@ usedRP3frac = {i: sum(tempP[i + f'_{j}_norm'][usedRP3].sum() for j in range(1,3)
 usedRP153frac = {i: sum(tempP[i + f'_{j}_norm'][usedRP153].sum() for j in range(1,3))/2/1e7 for i in alltem}
 allr3frac = {i: sum(tempP[i + f'_{j}_norm'][isallr3].sum() for j in range(1,3))/2/1e7 for i in alltem}
 
-knapp2025_phi2_groe = np.column_stack(([groe3frac[i] for i in alltem],[chaper3frac[i] for i in alltem]))
+knapp2024_phi2_groe = np.column_stack(([groe3frac[i] for i in alltem],[chaper3frac[i] for i in alltem]))
 coeffgroe = np.polyfit([groe3frac[i] for i in alltem] + [groefrac[i] for i in totalkey], [chaper3frac[i] for i in alltem] + [chapefrac[i] for i in totalkey], 1)
 phi2groeLine = np.column_stack(([0,1],[coeffgroe[1], coeffgroe[1] + coeffgroe[0]]))
-np.savetxt("knapp2025_phi2_groe.csv",knapp2025_phi2_groe, delimiter=",", header="groe,phi2", comments="")
+np.savetxt("knapp2024_phi2_groe.csv",knapp2024_phi2_groe, delimiter=",", header="groe,phi2", comments="")
 np.savetxt("phi2_groe_line.csv",phi2groeLine, delimiter=",", header="groe,phi2", comments="")
-# coeffgroe2 = np.polyfit([groe3frac[i] for i in alltem] + [groefrac[i] for i in totalkey], np.array([chaper3frac[i] for i in alltem] + [chapefrac[i] for i in totalkey]) ** 2, 1)
-# groexl = coeffgroe2[1]/coeffgroe2[0] * -1
-# groephi2square = np.column_stack((np.linspace(groexl, 0.1,200), [(i * coeffgroe2[0] + coeffgroe2[1]) ** 0.5 for i in np.linspace(groexl, 0.1,200)]))
-# np.savetxt("groe_phi2_square.csv", groephi2square, delimiter=",", header="groe,phi2", comments="")
 
-knapp2025_usedRP = np.column_stack(([usedRP3frac[i] for i in alltem],[allr3frac[i] for i in alltem]))
-np.savetxt("knapp2025_usedRP.csv", knapp2025_usedRP, delimiter=",", header="usedRP,phir", comments="")
+knapp2024_usedRP = np.column_stack(([usedRP3frac[i] for i in alltem],[allr3frac[i] for i in alltem]))
+np.savetxt("knapp2024_usedRP.csv", knapp2024_usedRP, delimiter=",", header="usedRP,phir", comments="")
 coeff3usedRP = np.polyfit([usedRP3frac[i] for i in alltem],[allr3frac[i] for i in alltem],1)
-knapp2025_usedRP_Line = np.column_stack(([0,1],[coeff3usedRP[1], coeff3usedRP[1] + coeff3usedRP[0]]))
-np.savetxt("knapp2025_usedRP_Line.csv", knapp2025_usedRP_Line, delimiter=",", header="usedRP,phir", comments="")
+knapp2024_usedRP_Line = np.column_stack(([0,1],[coeff3usedRP[1], coeff3usedRP[1] + coeff3usedRP[0]]))
+np.savetxt("knapp2024_usedRP_Line.csv", knapp2024_usedRP_Line, delimiter=",", header="usedRP,phir", comments="")
 
 phi2Temp = {i:groTemp[i]*coeffgroe[0] + coeffgroe[1] for i in htempkey}
 herendeen1979_phi2_phir = np.column_stack(([float(i) for i in htempkey],[phi2Temp[i] for i in htempkey],[phirRPtemp[i] for i in htempkey]))
@@ -171,54 +163,31 @@ np.savetxt("herendeen1979_tem_phi2_phir.csv", herendeen1979_phi2_phir, delimiter
 
 
 
-pep = 'lon  clpp  pppa  gspo  ompt  hyad  hybd  hyci  guaa  puud  spr  nlpc  purf  glms  asnb  yhbo  yajl  pepn  prlc  dcp  ddpx  ptra  pqql  pepb  pept  pepd  allc  gcp  map  pepq  pepp  ypdf  iap  iada  htpx  yggg  ycal  rsep  mepa  ydgd  degq  degs  ptrb  daca  dacd  dacc  pbpg  dacb  ycbz  lexa  umud  prc  sppa  sohb  pepe  ldca  hslv  iaaa  ggt  ydcp  yegq  yhbu  pmba  tldd'.split('  ')
-
-ispep1 = isinlist(pep)
-
-pepti = {i: data[i][ispep1].sum() for i in totalkey}
-peptifrac = {i: pepti[i]/totalmass[i] for i in totalkey}
-
-ispep2 = isinlist(pep, gene2)
-peptifrac2 = {i: sum(tempP[i + f'_{j}_norm'][ispep2].sum() for j in range(1,3))/2/1e7 for i in alltem}
-
-pepdict1 = {'medium': totalkey, 'peptifrac': [peptifrac[i] for i in totalkey]}
-pepdict2 = {'med_tem': alltem, 'peptifrac': [peptifrac2[i] for i in alltem]}
-
-import csv
-def saveDict2Csv(filename, data):
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=data.keys())
-        # 写入表头
-        writer.writeheader()
-        key1 = set(data.keys()).pop()
-        # 写入每一行数据
-        for i in range(len(data[key1])):
-            writer.writerow({key: data[key][i] for key in data.keys()})
-
-saveDict2Csv('diff_medium_phi3.csv',pepdict1)
-saveDict2Csv('diff_med_tem_phi3.csv',pepdict2)
-
 data0 = {'mu':mu, 'phir':{i: allrfrac[i] for i in mu},'phi2':{i:chapefrac[i] for i in mu}}
 import pickle
 with open('schmit2016_mu_phir_phi2.pkl','wb') as f:
-    pickle.dump(f, data0)
+    pickle.dump(data0, f)
 
 lbphi2_1 = [tempP[f'LB{i}_1_norm'][ischape3].sum()/1e7 for i in [16,25,30,37,43]]
 lbphi2_2 = [tempP[f'LB{i}_2_norm'][ischape3].sum()/1e7 for i in [16,25,30,37,43]]
 lbphir_1 = [tempP[f'LB{i}_1_norm'][isallr3].sum()/1e7 for i in [16,25,30,37,43]]
 lbphir_2 = [tempP[f'LB{i}_2_norm'][isallr3].sum()/1e7 for i in [16,25,30,37,43]]
-glcphi2_1 = [tempP[f'Glucose{i}_1_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
-glcphi2_2 = [tempP[f'Glucose{i}_2_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
-glcphir_1 = [tempP[f'Glucose{i}_1_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
-glcphir_2 = [tempP[f'Glucose{i}_2_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
-glyphi2_1 = [tempP[f'Glycerol{i}_1_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
-glyphi2_2 = [tempP[f'Glycerol{i}_2_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
-glyphir_1 = [tempP[f'Glycerol{i}_1_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
-glyphir_2 = [tempP[f'Glycerol{i}_2_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
-benjamin2024_lb = np.column_stack(([16,25,30,37,43], lbphir_1, lbphir_2, lbphi2_1, lbphi2_2))
-np.savetxt("benjamin2024_lb_tem_phi2_phir.csv", benjamin2024_lb, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
-benjamin2024_glc = np.column_stack(([25,30,37], glcphir_1, glcphir_2, glcphi2_1, glcphi2_2))
-np.savetxt("benjamin2024_glc_tem_phi2_phir.csv", benjamin2024_glc, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
-benjamin2024_gly = np.column_stack(([25,30,37], glyphir_1, glyphir_2, glyphi2_1, glyphi2_2))
-np.savetxt("benjamin2024_gly_tem_phi2_phir.csv", benjamin2024_gly, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
+# glcphi2_1 = [tempP[f'Glucose{i}_1_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
+# glcphi2_2 = [tempP[f'Glucose{i}_2_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
+# glcphir_1 = [tempP[f'Glucose{i}_1_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
+# glcphir_2 = [tempP[f'Glucose{i}_2_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
+# glyphi2_1 = [tempP[f'Glycerol{i}_1_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
+# glyphi2_2 = [tempP[f'Glycerol{i}_2_norm'][ischape3].sum()/1e7 for i in [25,30,37]]
+# glyphir_1 = [tempP[f'Glycerol{i}_1_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
+# glyphir_2 = [tempP[f'Glycerol{i}_2_norm'][isallr3].sum()/1e7 for i in [25,30,37]]
+knapp2024_lb = np.column_stack(([16,25,30,37,43], lbphir_1, lbphir_2, lbphi2_1, lbphi2_2))
+np.savetxt("knapp2024_lb_tem_phi2_phir.csv", knapp2024_lb, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
+# knapp2024_glc = np.column_stack(([25,30,37], glcphir_1, glcphir_2, glcphi2_1, glcphi2_2))
+# np.savetxt("knapp2024_glc_tem_phi2_phir.csv", knapp2024_glc, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
+# knapp2024_gly = np.column_stack(([25,30,37], glyphir_1, glyphir_2, glyphi2_1, glyphi2_2))
+# np.savetxt("knapp2024_gly_tem_phi2_phir.csv", knapp2024_gly, delimiter=",",header="tem,phir_1,phir_2,phi2_1,phi2_2",comments="")
 
+# Based on the above content, data on phi2 at different temperatures can be provided. Meanwhile, the growth rate can be obtained from fig 2b or fig 2c in the original text (knapp et.al., 10.1038/s41564-024-01841-4). From this, we can provide
+# knapp2024_37_gr_phi2.csv
+# knapp2024_30_gr_phi2.csv
+# knapp2024_25_gr_phi2.csv

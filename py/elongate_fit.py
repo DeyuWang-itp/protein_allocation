@@ -1,4 +1,5 @@
-# Fit the data in  farewell1998_elongate_rate.csv
+# used in Fig 3(b)
+# Fit the data in farewell1998_elongate_rate.csv
 # and generate data file farewell1998_elongate_rate_re.csv and fit_el_r.csv
 import pandas as pd
 import numpy as np
